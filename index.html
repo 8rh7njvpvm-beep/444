@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>第4節｜圓柱體積應用——儲水挑戰賽</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{--primary:#0277BD;--secondary:#01579B;--accent:#F5CB5C;--success:#2EC4B6;--danger:#E71D36;--bg:#F0F8FF;--card:#FFFFFF;--text:#2D3436;--shadow:0 4px 16px rgba(0,0,0,0.12);--radius:16px;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{font-family:'Noto Sans TC',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;}
+  .navbar{position:fixed;top:0;left:0;right:0;z-index:1000;background:linear-gradient(135deg,#01579B,#0288D1);padding:0 12px;display:flex;align-items:center;justify-content:space-between;height:56px;box-shadow:0 2px 12px rgba(0,0,0,0.2);}
+  .nav-title{color:#fff;font-size:18px;font-weight:900;white-space:nowrap;}
+  .nav-items{display:flex;gap:4px;overflow-x:auto;}
+  .nav-item{color:rgba(255,255,255,0.75);font-size:13px;font-weight:700;padding:6px 10px;border-radius:20px;cursor:pointer;white-space:nowrap;transition:all 0.3s;border:none;background:none;font-family:'Noto Sans TC',sans-serif;}
+  .nav-item:hover{color:#fff;background:rgba(255,255,255,0.15);}
+  .nav-item.active{color:#01579B;background:var(--accent);}
+  .nav-controls{display:flex;gap:6px;align-items:center;}
+  .nav-btn{background:rgba(255,255,255,0.2);color:#fff;border:none;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:700;cursor:pointer;transition:all 0.3s;font-family:'Noto Sans TC',sans-serif;}
+  .nav-btn:hover{background:rgba(255,255,255,0.35);}
+  .nav-btn:disabled{opacity:0.4;cursor:not-allowed;}
+  .main-content{margin-top:76px;padding:24px;max-width:1100px;margin-left:auto;margin-right:auto;}
+  .page{display:none;animation:fadeIn 0.5s ease;}
+  .page.active{display:block;}
+  @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+  .card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:28px;margin-bottom:24px;}
+  .section-title{font-size:28px;font-weight:900;color:var(--secondary);margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+  .btn{display:inline-flex;align-items:center;gap:8px;padding:12px 26px;border-radius:30px;font-size:18px;font-weight:700;border:none;cursor:pointer;transition:all 0.3s;font-family:'Noto Sans TC',sans-serif;}
+  .btn:hover{transform:scale(1.05);}
+  .btn-blue{background:linear-gradient(135deg,var(--primary),#0288D1);color:#fff;box-shadow:0 4px 12px rgba(2,119,189,0.4);}
+  .btn-primary{background:linear-gradient(135deg,#FF6B35,#FF8C42);color:#fff;box-shadow:0 4px 12px rgba(255,107,53,0.4);}
+  .btn-accent{background:linear-gradient(135deg,var(--accent),#F7D774);color:#01579B;box-shadow:0 4px 12px rgba(245,203,92,0.4);}
+  .mode-badge{display:inline-block;padding:4px 14px;border-radius:20px;font-size:15px;font-weight:700;margin-bottom:14px;}
+  .mode-pre{background:#E1F0FF;color:var(--secondary);}
+  .mode-post{background:#FFF0E8;color:#FF6B35;}
+  .mission-card{background:linear-gradient(135deg,#01579B,#0288D1);color:#fff;border-radius:var(--radius);padding:22px;text-align:center;box-shadow:0 6px 20px rgba(1,87,155,0.3);margin-bottom:18px;}
+  .mission-card h2{font-size:24px;margin-bottom:10px;}
+  .mission-card p{font-size:19px;line-height:1.6;}
+  .concept-box{background:linear-gradient(135deg,#E1F0FF,#BBDEFB);border-radius:12px;padding:16px;border-left:4px solid var(--primary);margin-bottom:14px;font-size:18px;}
+  .concept-box h4{font-size:20px;color:var(--secondary);margin-bottom:8px;}
+  .warmup-item{background:#E8F4FF;border-radius:12px;padding:14px 18px;margin-bottom:10px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .warmup-item label{font-size:19px;font-weight:700;flex:1;min-width:200px;}
+  .warmup-input{width:110px;padding:7px 10px;border:2px solid var(--primary);border-radius:10px;font-size:19px;text-align:center;font-family:'Noto Sans TC',sans-serif;outline:none;}
+  .warmup-input:focus{border-color:#FF6B35;}
+  .warmup-feedback{font-size:18px;font-weight:700;}
+  .flex-row{display:flex;gap:22px;flex-wrap:wrap;}
+  .flex-row>*{flex:1;min-width:260px;}
+  .svg-container{display:flex;justify-content:center;margin:18px 0;}
+  .quiz-container{max-width:680px;margin:0 auto;}
+  .quiz-progress{height:10px;background:#E0E0E0;border-radius:5px;margin-bottom:20px;overflow:hidden;}
+  .quiz-progress-bar{height:100%;background:linear-gradient(90deg,var(--primary),#FF6B35);border-radius:5px;transition:width 0.5s;}
+  .quiz-question{font-size:22px;font-weight:700;margin-bottom:18px;line-height:1.5;}
+  .quiz-options{display:flex;flex-direction:column;gap:10px;}
+  .quiz-option{padding:14px 18px;background:#E8F4FF;border:2px solid transparent;border-radius:12px;font-size:20px;cursor:pointer;transition:all 0.3s;font-family:'Noto Sans TC',sans-serif;text-align:left;}
+  .quiz-option:hover{border-color:var(--primary);background:#BBDEFB;}
+  .quiz-option.correct{border-color:var(--success);background:#E8FFF5;color:var(--success);}
+  .quiz-option.wrong{border-color:var(--danger);background:#FFE8EA;color:var(--danger);}
+  .quiz-option.disabled{pointer-events:none;opacity:0.7;}
+  .quiz-explanation{margin-top:14px;padding:14px;background:#FFF8E1;border-radius:12px;font-size:18px;line-height:1.6;display:none;}
+  .quiz-explanation.show{display:block;animation:fadeIn 0.4s;}
+  .quiz-score{text-align:center;padding:28px;}
+  .quiz-score .score-big{font-size:56px;font-weight:900;color:var(--primary);}
+  .quiz-score .score-label{font-size:22px;color:#555;}
+  .quiz-score .score-stars{font-size:38px;margin-top:8px;}
+  .quiz-score .score-msg{font-size:24px;font-weight:700;color:var(--secondary);margin-top:10px;}
+  .step-calc{background:#E8F4FF;border-radius:12px;padding:14px 18px;margin-bottom:10px;border-left:4px solid var(--primary);}
+  .step-label{font-size:19px;font-weight:700;color:var(--secondary);margin-bottom:6px;}
+  .step-formula{font-size:18px;color:#555;margin-bottom:6px;}
+  .step-input{width:110px;padding:7px 10px;border:2px solid var(--primary);border-radius:10px;font-size:19px;text-align:center;font-family:'Noto Sans TC',sans-serif;outline:none;}
+  .step-feedback{font-size:20px;font-weight:700;margin-left:8px;}
+  .step-complete{background:#E8FFF5!important;border-left-color:var(--success)!important;}
+  .think-box{background:linear-gradient(135deg,#FFF3E0,#FFE0B2);border-radius:12px;padding:18px;margin-top:18px;border:2px dashed #FF6B35;}
+  .think-box h4{font-size:20px;color:#FF6B35;margin-bottom:6px;}
+  .think-box p{font-size:18px;color:#555;}
+  .udl-tip{background:linear-gradient(135deg,#E8F5E9,#C8E6C9);border-radius:10px;padding:10px 14px;margin-top:10px;font-size:17px;color:#2E7D32;border-left:4px solid #4CAF50;}
+  .problem-card{background:linear-gradient(135deg,#FFF9C4,#FFF176);border-radius:12px;padding:18px;border:2px solid #F9A825;margin-bottom:14px;}
+  .problem-card h4{font-size:20px;color:#F57F17;margin-bottom:8px;}
+  .problem-card p{font-size:19px;line-height:1.6;}
+  .text-center{text-align:center;}
+  .mt-20{margin-top:20px;}
+  .highlight{color:var(--primary);font-weight:900;}
+  @keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+  .pulse{animation:pulse 2s infinite;}
+
+
+  /* 學生作答分析與報告工具 */
+  .report-tools {
+    margin-top: 24px; padding: 22px; border-radius: 18px;
+    background: linear-gradient(135deg,#F7FBFF,#EEF7FF);
+    border: 2px solid rgba(0,78,137,0.18); box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+    text-align: left;
+  }
+  .report-tools h3 { margin: 0 0 12px; color: var(--secondary); font-size: 24px; }
+  .report-tools p { font-size: 16px; line-height: 1.7; color: #3b4750; margin-bottom: 12px; }
+  .report-form { display: grid; grid-template-columns: repeat(auto-fit,minmax(180px,1fr)); gap: 12px; margin: 14px 0; }
+  .report-form label { font-weight: 700; color: var(--secondary); font-size: 15px; }
+  .report-form input { width: 100%; margin-top: 6px; padding: 10px 12px; border-radius: 10px; border: 2px solid #d9e7f5; font-size: 16px; font-family: inherit; }
+  .report-actions { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 12px; }
+  .report-actions button, .report-tools .file-label {
+    border: none; border-radius: 999px; padding: 10px 18px; font-size: 15px; font-weight: 800;
+    cursor: pointer; font-family: inherit; color: #fff; background: linear-gradient(135deg,var(--secondary),#1A6FB5);
+    display: inline-flex; align-items: center; gap: 6px;
+  }
+  .report-actions button:nth-child(2) { background: linear-gradient(135deg,var(--success),#36D1C4); }
+  .report-actions button:nth-child(3) { background: linear-gradient(135deg,var(--primary),#FF8C42); }
+  .report-actions button:hover, .report-tools .file-label:hover { transform: translateY(-1px); filter: brightness(1.04); }
+  .report-preview { margin-top: 14px; padding: 14px; border-radius: 14px; background: #fff; border: 1px solid #ddebf7; font-size: 15px; line-height: 1.7; }
+  .report-preview strong { color: var(--secondary); }
+
+</style>
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-title">🏗️ 第4節｜圓柱體積應用</div>
+  <div class="nav-items">
+    <button class="nav-item active" onclick="goToPage(0)">🏗️ 情境</button>
+    <button class="nav-item" onclick="goToPage(1)">📚 溫故</button>
+    <button class="nav-item" onclick="goToPage(2)">🧮 單位換算</button>
+    <button class="nav-item" onclick="goToPage(3)">💪 工地任務</button>
+    <button class="nav-item" onclick="goToPage(4)">🌊 進階挑戰</button>
+    <button class="nav-item" onclick="goToPage(5)">🏆 評量</button>
+  </div>
+  <div class="nav-controls">
+    <button class="nav-btn" id="prevBtn" onclick="prevPage()" disabled>◀ 上一步</button>
+    <button class="nav-btn" id="nextBtn" onclick="nextPage()">下一步 ▶</button>
+  </div>
+</nav>
+
+<div class="main-content">
+  <!-- 第0頁 -->
+  <div class="page active" id="page0">
+    <div class="card">
+      <span class="mode-badge mode-pre">📖 課前預習</span>
+      <div class="section-title"><span>🏗️</span> 今日任務——澳門工地數學</div>
+      <div class="mission-card">
+        <h2>🎯 澳門工地工程師的挑戰！</h2>
+        <p>澳門某新填海區正在施工，工地上有圓柱形水泥柱、圓形蓄水池。<br>作為工程師助手，你能幫忙計算<b>材料用量</b>和<b>容積</b>嗎？<br>今日應用圓柱體積解決<b>真實工程問題</b>！</p>
+      </div>
+      <div class="svg-container">
+        <svg width="380" height="220" viewBox="0 0 380 220">
+          <!-- 工地場景 -->
+          <!-- 地面 -->
+          <rect x="0" y="180" width="380" height="40" fill="rgba(139,90,43,0.3)" stroke="none"/>
+          <!-- 圓柱水泥柱 -->
+          <ellipse cx="80" cy="80" rx="30" ry="10" fill="rgba(120,120,120,0.6)" stroke="#555" stroke-width="2"/>
+          <rect x="50" y="80" width="60" height="100" fill="rgba(150,150,150,0.4)" stroke="#555" stroke-width="2"/>
+          <ellipse cx="80" cy="180" rx="30" ry="10" fill="rgba(120,120,120,0.6)" stroke="#555" stroke-width="2"/>
+          <text x="80" y="132" text-anchor="middle" font-size="14" fill="#333" font-weight="bold" font-family="Noto Sans TC">水泥柱</text>
+          <!-- 水塔 -->
+          <ellipse cx="220" cy="60" rx="50" ry="16" fill="rgba(2,119,189,0.3)" stroke="var(--primary)" stroke-width="2"/>
+          <rect x="170" y="60" width="100" height="80" fill="rgba(2,119,189,0.15)" stroke="var(--primary)" stroke-width="2"/>
+          <ellipse cx="220" cy="140" rx="50" ry="16" fill="rgba(2,119,189,0.4)" stroke="var(--primary)" stroke-width="2"/>
+          <text x="220" y="102" text-anchor="middle" font-size="15" fill="var(--secondary)" font-weight="bold" font-family="Noto Sans TC">蓄水池</text>
+          <!-- 問號 -->
+          <text x="330" y="120" text-anchor="middle" font-size="40" fill="#FF6B35" font-weight="900" font-family="Noto Sans TC">?</text>
+        </svg>
+      </div>
+      <div class="concept-box">
+        <h4>💡 本節學習目標</h4>
+        <p>① 能靈活應用 V=πr²h 解決<b>實際問題</b><br>② 掌握<b>單位換算</b>（cm³↔L、cm↔m）<br>③ 理解「容積」與「體積」的關係</p>
+      </div>
+      <div class="text-center mt-20">
+        <button class="btn btn-blue pulse" onclick="goToPage(1)">🚀 開始！</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 第1頁：溫故 -->
+  <div class="page" id="page1">
+    <div class="card">
+      <span class="mode-badge mode-pre">📖 課前預習</span>
+      <div class="section-title"><span>📚</span> 溫故知新——體積公式鞏固</div>
+      <div class="concept-box">
+        <h4>🔁 上節學過</h4>
+        <p style="font-size:19px;line-height:2;">圓柱體積 V = πr²h = 底面積 × 高<br>V 是體積，單位：cm³、m³</p>
+      </div>
+      <h3 style="font-size:22px;color:var(--secondary);margin-bottom:10px;">🧮 快速熱身（π=3.14）</h3>
+      <div class="warmup-item">
+        <label>1. r=5cm，h=8cm，V=？cm³</label>
+        <input type="number" class="warmup-input" id="w1" placeholder="?">
+        <span class="warmup-feedback" id="w1fb"></span>
+      </div>
+      <div class="warmup-item">
+        <label>2. 直徑=10cm，h=6cm，V=？cm³</label>
+        <input type="number" class="warmup-input" id="w2" placeholder="?">
+        <span class="warmup-feedback" id="w2fb"></span>
+      </div>
+      <div class="warmup-item">
+        <label>3. V=942cm³，底面積=94.2cm²，h=？cm</label>
+        <input type="number" class="warmup-input" id="w3" placeholder="?">
+        <span class="warmup-feedback" id="w3fb"></span>
+      </div>
+      <div class="text-center mt-20">
+        <button class="btn btn-blue" onclick="checkWarmup()">✅ 提交</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 第2頁：單位換算 -->
+  <div class="page" id="page2">
+    <div class="card">
+      <span class="mode-badge mode-pre">📖 課前預習</span>
+      <div class="section-title"><span>🧮</span> 單位換算——重要！</div>
+      <div class="flex-row">
+        <div>
+          <div class="concept-box">
+            <h4>📏 長度換算</h4>
+            <p style="font-size:19px;line-height:2.2;">
+              1 m = 100 cm<br>
+              1 m² = 10000 cm²<br>
+              <b>1 m³ = 1000000 cm³</b>（百萬！）
+            </p>
+          </div>
+          <div class="concept-box" style="background:linear-gradient(135deg,#E8F5E9,#C8E6C9);">
+            <h4>💧 體積與容量</h4>
+            <p style="font-size:19px;line-height:2.2;">
+              <b>1 L（公升）= 1000 cm³</b><br>
+              1 mL = 1 cm³<br>
+              1 m³ = 1000 L
+            </p>
+          </div>
+        </div>
+        <div>
+          <h3 style="font-size:22px;color:var(--secondary);margin-bottom:10px;">🧮 換算練習</h3>
+          <div class="warmup-item">
+            <label>1. 2.5 L = ? cm³</label>
+            <input type="number" class="warmup-input" id="u1" placeholder="?">
+            <span class="warmup-feedback" id="u1fb"></span>
+          </div>
+          <div class="warmup-item">
+            <label>2. 3140 cm³ = ? L</label>
+            <input type="number" class="warmup-input" id="u2" placeholder="?">
+            <span class="warmup-feedback" id="u2fb"></span>
+          </div>
+          <div class="warmup-item">
+            <label>3. 1 m³ = ? L</label>
+            <input type="number" class="warmup-input" id="u3" placeholder="?">
+            <span class="warmup-feedback" id="u3fb"></span>
+          </div>
+          <div class="text-center mt-20">
+            <button class="btn btn-blue" onclick="checkUnits()">✅ 提交</button>
+          </div>
+        </div>
+      </div>
+      <div class="udl-tip">💡 <b>UDL提示：</b>體積用「cm³」，容量用「L（公升）」。1L=1000cm³，這是實際應用中最常用的換算！</div>
+    </div>
+  </div>
+
+  <!-- 第3頁：工地任務 -->
+  <div class="page" id="page3">
+    <div class="card">
+      <span class="mode-badge mode-pre">📖 課前預習</span>
+      <div class="section-title"><span>💪</span> 工地任務——計算水泥柱</div>
+      <div class="problem-card">
+        <h4>🏗️ 問題一：水泥柱體積</h4>
+        <p>工地需要製作一批圓柱形水泥柱。<br>每根：底面直徑 <b>60cm</b>，高 <b>3m</b>。<br>製作 10 根，共需多少 m³ 的混凝土？（π=3.14）</p>
+      </div>
+      <div class="step-calc" id="sc1">
+        <div class="step-label">第一步：換算單位（統一用 m）</div>
+        <div class="step-formula">底面直徑60cm = ? m，底面半徑r = ? m</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:19px;">r =</span>
+          <input type="number" step="0.01" class="step-input" id="si1" placeholder="?">
+          <span style="font-size:19px;">m</span>
+          <span class="step-feedback" id="sf1"></span>
+        </div>
+      </div>
+      <div class="step-calc" id="sc2" style="opacity:0.4;pointer-events:none;">
+        <div class="step-label">第二步：計算一根柱體積</div>
+        <div class="step-formula">V = π × r² × h = 3.14 × 0.3² × 3 = 3.14 × 0.09 × 3 = ?</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:19px;">V = </span>
+          <input type="number" step="0.001" class="step-input" id="si2" placeholder="?">
+          <span style="font-size:19px;">m³</span>
+          <span class="step-feedback" id="sf2"></span>
+        </div>
+      </div>
+      <div class="step-calc" id="sc3" style="opacity:0.4;pointer-events:none;">
+        <div class="step-label">第三步：計算10根總體積</div>
+        <div class="step-formula">總體積 = 0.8478 × 10 = ?</div>
+        <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
+          <span style="font-size:19px;">總 V = </span>
+          <input type="number" step="0.01" class="step-input" id="si3" placeholder="?">
+          <span style="font-size:19px;">m³</span>
+          <span class="step-feedback" id="sf3"></span>
+        </div>
+      </div>
+      <div id="scResult" style="display:none;" class="text-center mt-20">
+        <div style="background:linear-gradient(135deg,#E8FFF5,#C8E6C9);border-radius:14px;padding:22px;font-size:22px;font-weight:700;color:#1B5E20;">
+          🎉 正確！需要 <span style="font-size:28px;color:var(--primary);">8.478 m³</span> 混凝土！
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 第4頁：進階挑戰 -->
+  <div class="page" id="page4">
+    <div class="card">
+      <span class="mode-badge mode-pre">📖 課前預習</span>
+      <div class="section-title"><span>🌊</span> 進階挑戰——蓄水池</div>
+      <div class="problem-card">
+        <h4>💧 問題二：蓄水池容量</h4>
+        <p>一個圓柱形蓄水池：內徑（直徑）= <b>4m</b>，深（高）= <b>3m</b>。<br>① 最多能儲多少 m³ 的水？<br>② 換算成多少公升（L）？（π=3.14）</p>
+      </div>
+      <div class="warmup-item">
+        <label>① 蓄水池體積 V = ? m³（π=3.14，r=2m）</label>
+        <input type="number" step="0.01" class="warmup-input" id="p1" placeholder="?">
+        <span class="warmup-feedback" id="p1fb"></span>
+      </div>
+      <div class="warmup-item">
+        <label>② 換算：? L（1m³=1000L）</label>
+        <input type="number" class="warmup-input" id="p2" placeholder="?">
+        <span class="warmup-feedback" id="p2fb"></span>
+      </div>
+      <div class="text-center mt-20">
+        <button class="btn btn-blue" onclick="checkPool()">✅ 提交</button>
+      </div>
+      <div class="think-box">
+        <h4>🌏 澳門環保思考</h4>
+        <p>如果澳門每天每人用水200L，這個蓄水池能供應多少人用一天？</p>
+        <p id="eco" style="display:none;margin-top:8px;color:var(--primary);font-weight:700;">💡 37680÷200 = 188.4，約供188人用一天！所以節約用水非常重要！</p>
+      </div>
+      <div class="text-center mt-20">
+        <button class="btn btn-accent" onclick="document.getElementById('eco').style.display='block'">計算人數</button>
+      </div>
+      <div class="udl-tip">💡 <b>UDL提示：</b>解決實際問題時，先明確「要求什麼」，再套公式，最後做單位換算！</div>
+    </div>
+  </div>
+
+  <!-- 第5頁：課後評量 -->
+  <div class="page" id="page5">
+    <div class="card">
+      <span class="mode-badge mode-post">📝 課後評量</span>
+      <div class="section-title"><span>🏆</span> 課後評量——體積應用</div>
+      <div class="quiz-container">
+        <div class="quiz-progress"><div class="quiz-progress-bar" id="qBar" style="width:0%"></div></div>
+        <div id="qContent"></div>
+        <div id="qResult" style="display:none" class="quiz-score"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+let currentPage=0;const totalPages=6;
+function goToPage(idx){
+  if(idx<0||idx>=totalPages)return;
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page'+idx).classList.add('active');
+  document.querySelectorAll('.nav-item').forEach((n,i)=>n.classList.toggle('active',i===idx));
+  currentPage=idx;
+  document.getElementById('prevBtn').disabled=(idx===0);
+  document.getElementById('nextBtn').disabled=(idx===totalPages-1);
+  if(idx===5&&!quizDone)initQuiz();
+  window.scrollTo(0,0);
+}
+function prevPage(){goToPage(currentPage-1);}function nextPage(){goToPage(currentPage+1);}
+
+function checkWarmup(){
+  [{id:'w1',ans:628,hint:'3.14×25×8=628'},{id:'w2',ans:471,hint:'r=5, 3.14×25×6=471'},{id:'w3',ans:10,hint:'V÷底面積=942÷94.2=10'}].forEach(c=>{
+    const v=parseFloat(document.getElementById(c.id).value);
+    const fb=document.getElementById(c.id+'fb');
+    if(Math.abs(v-c.ans)<0.1){fb.textContent='✅ 正確！';fb.style.color='var(--success)';}
+    else{fb.textContent='❌ 答：'+c.ans+'（'+c.hint+'）';fb.style.color='var(--danger)';}
+  });
+}
+function checkUnits(){
+  [{id:'u1',ans:2500,hint:'2.5×1000=2500'},{id:'u2',ans:3.14,hint:'3140÷1000=3.14'},{id:'u3',ans:1000,hint:'1m³=1000L'}].forEach(c=>{
+    const v=parseFloat(document.getElementById(c.id).value);
+    const fb=document.getElementById(c.id+'fb');
+    if(Math.abs(v-c.ans)<0.01){fb.textContent='✅ 正確！';fb.style.color='var(--success)';}
+    else{fb.textContent='❌ 答：'+c.ans+'（'+c.hint+'）';fb.style.color='var(--danger)';}
+  });
+}
+
+document.addEventListener('DOMContentLoaded',function(){
+  document.getElementById('si1').addEventListener('input',function(){
+    if(Math.abs(parseFloat(this.value)-0.3)<0.01){
+      document.getElementById('sf1').textContent='✅ r=0.3m';document.getElementById('sf1').style.color='var(--success)';
+      document.getElementById('sc1').classList.add('step-complete');
+      document.getElementById('sc2').style.opacity='1';document.getElementById('sc2').style.pointerEvents='auto';
+      document.getElementById('si2').focus();
+    }
+  });
+  document.getElementById('si2').addEventListener('input',function(){
+    if(Math.abs(parseFloat(this.value)-0.8478)<0.01){
+      document.getElementById('sf2').textContent='✅';document.getElementById('sf2').style.color='var(--success)';
+      document.getElementById('sc2').classList.add('step-complete');
+      document.getElementById('sc3').style.opacity='1';document.getElementById('sc3').style.pointerEvents='auto';
+      document.getElementById('si3').focus();
+    }
+  });
+  document.getElementById('si3').addEventListener('input',function(){
+    if(Math.abs(parseFloat(this.value)-8.478)<0.05){
+      document.getElementById('sf3').textContent='✅';document.getElementById('sf3').style.color='var(--success)';
+      document.getElementById('sc3').classList.add('step-complete');
+      document.getElementById('scResult').style.display='block';
+    }
+  });
+});
+
+function checkPool(){
+  // r=2, h=3, V=3.14*4*3=37.68, L=37680
+  const v1=parseFloat(document.getElementById('p1').value);
+  const v2=parseFloat(document.getElementById('p2').value);
+  const fb1=document.getElementById('p1fb');const fb2=document.getElementById('p2fb');
+  if(Math.abs(v1-37.68)<0.1){fb1.textContent='✅ 3.14×4×3=37.68m³';fb1.style.color='var(--success)';}
+  else{fb1.textContent='❌ 答：37.68（3.14×2²×3）';fb1.style.color='var(--danger)';}
+  if(Math.abs(v2-37680)<10){fb2.textContent='✅ 37680L！';fb2.style.color='var(--success)';}
+  else{fb2.textContent='❌ 答：37680（37.68×1000）';fb2.style.color='var(--danger)';}
+}
+
+let quizDone=false,qCur=0,qScore=0;
+const quizData=[
+  {q:'一個圓柱形油桶：r=4dm，h=10dm，能裝多少升油？（π=3.14，1L=1dm³）',opts:['502.4','1004.8','251.2','2008'],ans:0,exp:'V=3.14×16×10=502.4dm³=502.4L'},
+  {q:'一根圓柱水泥柱：底面直徑1m，高5m，體積多少m³？（π=3.14）',opts:['3.925','15.7','7.85','1.57'],ans:0,exp:'r=0.5m, V=3.14×0.25×5=3.925m³'},
+  {q:'1 m³ = 多少 cm³？',opts:['1000','10000','100000','1000000'],ans:3,exp:'1m=100cm，1m³=100×100×100=1000000cm³'},
+  {q:'一個圓柱形水杯：r=3cm，h=12cm，最多裝多少mL水？（π=3.14，1mL=1cm³）',opts:['339.12','678.24','1017.36','113.04'],ans:0,exp:'V=3.14×9×12=339.12cm³=339.12mL'},
+  {q:'一個圓柱形糧倉：底面積=78.5m²，高=4m，能儲多少噸糧食？（1m³糧食約重0.8噸）',opts:['251.2','314','196','628'],ans:0,exp:'V=78.5×4=314m³，重量=314×0.8=251.2噸'}
+];
+function initQuiz(){quizDone=true;qCur=0;qScore=0;renderQ();}
+function renderQ(){
+  if(qCur>=quizData.length){showResult();return;}
+  const q=quizData[qCur];
+  document.getElementById('qBar').style.width=(qCur/quizData.length*100)+'%';
+  let html='<div class="quiz-question">'+(qCur+1)+'. '+q.q+'</div><div class="quiz-options">';
+  q.opts.forEach((o,i)=>html+='<button class="quiz-option" onclick="pickQ('+i+')">' +String.fromCharCode(65+i)+'. '+o+'</button>');
+  html+='</div><div class="quiz-explanation" id="qExp">'+q.exp+'</div>';
+  document.getElementById('qContent').innerHTML=html;
+}
+function pickQ(i){
+  const q=quizData[qCur];
+  document.querySelectorAll('.quiz-option').forEach((o,j)=>{o.classList.add('disabled');if(j===q.ans)o.classList.add('correct');if(j===i&&i!==q.ans)o.classList.add('wrong');});
+  if(i===q.ans)qScore++;
+  document.getElementById('qExp').classList.add('show');
+  setTimeout(()=>{qCur++;renderQ();},2600);
+}
+function showResult(){
+  document.getElementById('qBar').style.width='100%';
+  const stars=['⭐','⭐⭐','⭐⭐⭐','⭐⭐⭐⭐','⭐⭐⭐⭐⭐'];
+  const msgs=['繼續加油！','再努力！','不錯！','真棒！','工程師達人！'];
+  document.getElementById('qContent').innerHTML='';
+  const el=document.getElementById('qResult');el.style.display='block';
+  el.innerHTML='<div class="score-label">課後評量得分</div><div class="score-big">'+qScore+' / 5</div><div class="score-stars">'+stars[Math.max(0,qScore-1)]+'</div><div class="score-msg">'+msgs[Math.max(0,qScore-1)]+'</div><div style="margin-top:18px"><button class="btn btn-primary" onclick="resetQuiz()">重新挑戰</button></div>';
+}
+function resetQuiz(){quizDone=false;document.getElementById('qResult').style.display='none';document.getElementById('qContent').innerHTML='';initQuiz();}
+</script>
+
+<script>
+/* 學生作答分析與報告工具：自動記錄選項、正誤、解析，完成後生成報告與匯出資料。 */
+(function(){
+  if (window.__studentReportToolsInstalled) return;
+  window.__studentReportToolsInstalled = true;
+
+  const lessonTitle = (document.title || document.querySelector('h1')?.textContent || '互動評量').trim();
+  const storageKey = 'studentReport_' + lessonTitle;
+  const session = {
+    lessonTitle,
+    startedAt: new Date().toISOString(),
+    completedAt: '',
+    studentName: '',
+    className: '',
+    studentNo: '',
+    answers: [],
+    interactions: []
+  };
+
+  function cleanText(text){ return (text || '').replace(/\s+/g,' ').trim(); }
+  function stripPrefix(text){ return cleanText(text).replace(/^[A-D]\.?\s*/,''); }
+  function currentQuestionText(){ return cleanText(document.querySelector('.quiz-question')?.textContent || ''); }
+  function currentOptions(){ return Array.from(document.querySelectorAll('.quiz-option')).map(btn => stripPrefix(btn.textContent)); }
+  function currentExplanation(){ return cleanText(document.querySelector('.quiz-explanation.show, .quiz-explanation')?.textContent || ''); }
+
+  function inferConcept(question, explanation){
+    const text = (question + ' ' + explanation).toLowerCase();
+    const rules = [
+      ['側面積', ['側面積','底面周長','展開','標籤','2πrh','2×3.14']],
+      ['表面積組成', ['表面積','有蓋','無蓋','底面積','刷漆','包裝']],
+      ['圓柱體積', ['圓柱體積','v=sh','底面積×高','容積','水桶','硬幣']],
+      ['單位換算', ['cm³','dm³','m³','升','l','換算','重量']],
+      ['壁厚建模', ['壁厚','內徑','外徑','管道','實際容積']],
+      ['圓錐體積', ['圓錐','三分之一','1/3','砂堆','v=1/3']],
+      ['等底等高', ['等底等高','等底','等高','控制變量']],
+      ['組合圖形', ['組合','重疊','外牆','粉刷','未來城','建築']],
+      ['數學推理', ['推導','理由','為什麼','結論','祖暅','極限','割補']]
+    ];
+    for (const [label, keys] of rules){ if (keys.some(k => text.includes(k))) return label; }
+    return '綜合應用';
+  }
+
+  function recordAnswer(choiceIndex){
+    const question = currentQuestionText();
+    const options = currentOptions();
+    if (!question || !options.length) return;
+    setTimeout(function(){
+      const buttons = Array.from(document.querySelectorAll('.quiz-option'));
+      const correctIndex = buttons.findIndex(btn => btn.classList.contains('correct'));
+      const explanation = currentExplanation();
+      const selectedText = options[choiceIndex] || '';
+      const correctText = options[correctIndex] || '';
+      const isCorrect = choiceIndex === correctIndex;
+      session.answers.push({
+        no: session.answers.length + 1,
+        question,
+        selectedIndex: choiceIndex,
+        selectedText,
+        correctIndex,
+        correctText,
+        isCorrect,
+        explanation,
+        concept: inferConcept(question, explanation),
+        answeredAt: new Date().toISOString()
+      });
+      persistSession();
+    }, 80);
+  }
+
+  function persistSession(){
+    try { localStorage.setItem(storageKey, JSON.stringify(session)); } catch(e) {}
+  }
+
+  function summarize(data){
+    const answers = data.answers || [];
+    const total = answers.length;
+    const correct = answers.filter(a => a.isCorrect).length;
+    const accuracy = total ? Math.round(correct / total * 100) : 0;
+    const wrong = answers.filter(a => !a.isCorrect);
+    const conceptMap = {};
+    answers.forEach(a => {
+      if (!conceptMap[a.concept]) conceptMap[a.concept] = {total:0, correct:0, wrong:0};
+      conceptMap[a.concept].total++;
+      if (a.isCorrect) conceptMap[a.concept].correct++; else conceptMap[a.concept].wrong++;
+    });
+    const weak = Object.entries(conceptMap)
+      .filter(([,v]) => v.wrong > 0)
+      .sort((a,b) => b[1].wrong - a[1].wrong || a[1].correct - b[1].correct)
+      .map(([k,v]) => ({concept:k, ...v, accuracy: Math.round(v.correct / v.total * 100)}));
+    let level = '需要重點跟進';
+    if (accuracy >= 90) level = '掌握優秀';
+    else if (accuracy >= 75) level = '掌握良好';
+    else if (accuracy >= 60) level = '基本掌握';
+    return {total, correct, wrong: total - correct, accuracy, weak, level};
+  }
+
+  function recommendations(summary){
+    if (!summary.total) return ['尚未完成課後評量，建議先完成全部題目再生成報告。'];
+    const recs = [];
+    if (summary.accuracy >= 90) recs.push('可安排拓展任務，讓學生嘗試更複雜的生活情境建模。');
+    else if (summary.accuracy >= 75) recs.push('整體掌握良好，可針對錯題涉及的概念進行短時間鞏固。');
+    else if (summary.accuracy >= 60) recs.push('學生已具備基礎理解，但需增加分步示範與變式練習。');
+    else recs.push('建議進行補救教學，先回到具體操作與圖像表徵，再進入公式計算。');
+    summary.weak.slice(0,3).forEach(w => recs.push('薄弱點「' + w.concept + '」：建議安排針對性小練習，要求學生說明解題理由而不只寫答案。'));
+    return recs;
+  }
+
+  function getMeta(){
+    session.studentName = cleanText(document.getElementById('reportStudentName')?.value) || session.studentName || '未填寫';
+    session.className = cleanText(document.getElementById('reportClassName')?.value) || session.className || '未填寫';
+    session.studentNo = cleanText(document.getElementById('reportStudentNo')?.value) || session.studentNo || '未填寫';
+    if (!session.completedAt) session.completedAt = new Date().toISOString();
+    persistSession();
+  }
+
+  function makeReportHtml(data){
+    const s = summarize(data);
+    const recs = recommendations(s);
+    const rows = (data.answers || []).map(a => '<tr><td>'+a.no+'</td><td>'+escapeHtml(a.question)+'</td><td>'+escapeHtml(a.selectedText)+'</td><td>'+escapeHtml(a.correctText)+'</td><td>'+(a.isCorrect?'正確':'錯誤')+'</td><td>'+escapeHtml(a.concept)+'</td></tr>').join('');
+    const weakHtml = s.weak.length ? s.weak.map(w => '<li>'+escapeHtml(w.concept)+'：答對 '+w.correct+'/'+w.total+'，正確率 '+w.accuracy+'%</li>').join('') : '<li>暫未發現明顯薄弱點。</li>';
+    const recHtml = recs.map(r => '<li>'+escapeHtml(r)+'</li>').join('');
+    return '<!DOCTYPE html><html lang="zh-TW"><head><meta charset="utf-8"><title>學生作答分析報告</title><style>body{font-family:"Noto Sans TC","Microsoft JhengHei",sans-serif;line-height:1.7;color:#25313b;padding:28px;background:#f7fbff}h1{color:#004E89}h2{color:#004E89;border-bottom:2px solid #b9d7f0;padding-bottom:6px}.card{background:#fff;border-radius:16px;padding:20px;margin:16px 0;box-shadow:0 4px 16px rgba(0,0,0,.08)}.summary{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px}.metric{background:#eef7ff;border-radius:12px;padding:14px;text-align:center}.metric strong{display:block;font-size:30px;color:#FF6B35}table{width:100%;border-collapse:collapse;background:#fff}th,td{border:1px solid #d7e6f4;padding:8px;vertical-align:top}th{background:#004E89;color:#fff}@media print{body{background:#fff}.card{box-shadow:none;border:1px solid #ddd}}</style></head><body>'+
+      '<h1>學生作答分析報告</h1><div class="card"><p><strong>課題：</strong>'+escapeHtml(data.lessonTitle)+'</p><p><strong>學生：</strong>'+escapeHtml(data.studentName || '未填寫')+'　<strong>班級：</strong>'+escapeHtml(data.className || '未填寫')+'　<strong>座號：</strong>'+escapeHtml(data.studentNo || '未填寫')+'</p><p><strong>完成時間：</strong>'+new Date(data.completedAt || Date.now()).toLocaleString('zh-HK')+'</p></div>'+
+      '<div class="card"><h2>一、整體表現</h2><div class="summary"><div class="metric"><strong>'+s.correct+'/'+s.total+'</strong>答對題數</div><div class="metric"><strong>'+s.accuracy+'%</strong>正確率</div><div class="metric"><strong>'+escapeHtml(s.level)+'</strong>學習判斷</div></div></div>'+
+      '<div class="card"><h2>二、概念薄弱點</h2><ul>'+weakHtml+'</ul></div>'+
+      '<div class="card"><h2>三、教學建議</h2><ul>'+recHtml+'</ul></div>'+
+      '<div class="card"><h2>四、逐題記錄</h2><table><thead><tr><th>題號</th><th>題目</th><th>學生答案</th><th>正確答案</th><th>結果</th><th>概念</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+
+      '<script>window.onload=function(){setTimeout(function(){window.print&&window.print()},400)}<\/script></body></html>';
+  }
+
+  function escapeHtml(str){ return String(str || '').replace(/[&<>"]/g, ch => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[ch])); }
+
+  function download(filename, content, type){
+    const blob = new Blob([content], {type: type || 'text/plain;charset=utf-8'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename; document.body.appendChild(a); a.click(); a.remove(); URL.revokeObjectURL(url);
+  }
+
+  function exportJson(){
+    getMeta();
+    const safeName = (session.studentName || '學生').replace(/[\\/:*?"<>|\s]+/g,'_');
+    download(safeName + '_' + lessonTitle.replace(/[\\/:*?"<>|\s]+/g,'_') + '_作答資料.json', JSON.stringify(session, null, 2), 'application/json;charset=utf-8');
+  }
+
+  function exportCsv(){
+    getMeta();
+    const header = ['課題','班級','座號','姓名','題號','題目','學生答案','正確答案','結果','概念','作答時間'];
+    const rows = session.answers.map(a => [session.lessonTitle, session.className, session.studentNo, session.studentName, a.no, a.question, a.selectedText, a.correctText, a.isCorrect?'正確':'錯誤', a.concept, a.answeredAt]);
+    const csv = [header, ...rows].map(row => row.map(cell => '"' + String(cell || '').replace(/"/g,'""') + '"').join(',')).join('\n');
+    const safeName = (session.studentName || '學生').replace(/[\\/:*?"<>|\s]+/g,'_');
+    download(safeName + '_' + lessonTitle.replace(/[\\/:*?"<>|\s]+/g,'_') + '_作答紀錄.csv', '\ufeff' + csv, 'text/csv;charset=utf-8');
+  }
+
+  function openReport(){
+    getMeta();
+    const html = makeReportHtml(session);
+    const win = window.open('', '_blank');
+    if (win) { win.document.open(); win.document.write(html); win.document.close(); }
+    else { download('學生作答分析報告.html', html, 'text/html;charset=utf-8'); }
+  }
+
+  function renderReportTools(){
+    const target = document.getElementById('qResult') || document.body;
+    if (!target || document.getElementById('studentReportTools')) return;
+    const s = summarize(session);
+    const box = document.createElement('div');
+    box.id = 'studentReportTools';
+    box.className = 'report-tools';
+    box.innerHTML = '<h3>📊 學生作答分析與報告</h3>'+
+      '<p>本網頁可作為回家功課。完成評量後，請填寫班級、座號和姓名，按「生成個人報告」，然後將報告頁面截圖，上傳到 PowerLesson2 指定功課位置；老師會根據截圖統計完成情況和學習難點。若老師要求，也可匯出 JSON/CSV 作進一步分析。</p>'+
+      '<div class="report-form"><label>班級<input id="reportClassName" placeholder="例：六甲"></label><label>座號<input id="reportStudentNo" placeholder="例：12"></label><label>學生姓名<input id="reportStudentName" placeholder="請輸入姓名"></label></div>'+
+      '<div class="report-preview"><strong>目前統計：</strong>答對 '+s.correct+'/'+s.total+' 題，正確率 '+s.accuracy+'%。'+(s.weak.length?' 主要薄弱點：'+s.weak.slice(0,3).map(w=>w.concept).join('、')+'。':' 暫未發現明顯薄弱點。')+'</div>'+
+      '<div class="report-actions"><button type="button" id="btnOpenStudentReport">生成個人報告</button><button type="button" id="btnExportJson">匯出JSON</button><button type="button" id="btnExportCsv">匯出CSV</button></div>';
+    target.appendChild(box);
+    document.getElementById('btnOpenStudentReport').addEventListener('click', openReport);
+    document.getElementById('btnExportJson').addEventListener('click', exportJson);
+    document.getElementById('btnExportCsv').addEventListener('click', exportCsv);
+  }
+
+  const originalPickQ = window.pickQ;
+  if (typeof originalPickQ === 'function') {
+    window.pickQ = function(i){ recordAnswer(i); return originalPickQ.apply(this, arguments); };
+  }
+  const originalShowResult = window.showResult;
+  if (typeof originalShowResult === 'function') {
+    window.showResult = function(){
+      const result = originalShowResult.apply(this, arguments);
+      session.completedAt = new Date().toISOString();
+      persistSession();
+      setTimeout(renderReportTools, 120);
+      return result;
+    };
+  }
+  const originalResetQuiz = window.resetQuiz;
+  if (typeof originalResetQuiz === 'function') {
+    window.resetQuiz = function(){
+      session.answers = [];
+      session.startedAt = new Date().toISOString();
+      session.completedAt = '';
+      persistSession();
+      const old = document.getElementById('studentReportTools');
+      if (old) old.remove();
+      return originalResetQuiz.apply(this, arguments);
+    };
+  }
+
+  window.StudentReportTools = {session, summarize, openReport, exportJson, exportCsv};
+})();
+</script>
+
+</body>
+</html>
